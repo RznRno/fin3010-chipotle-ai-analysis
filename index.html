@@ -295,7 +295,7 @@
           <div class="grid two" style="gap:8px"><input id="curA" type="number" value="1466953"><input id="curL" type="number" value="1188142"></div>
         </div>
       </div>
-      <p><button class="btn" onclick="calcRatios()">Recalculate Ratios</button></p>
+      <p><button class="btn" onclick="resetRatios()">Reset Ratios to 10-K Defaults</button></p>
       <div class="grid four" id="ratioCards"></div>
 
       <h3>DuPont Identity</h3>
@@ -333,7 +333,7 @@
           <label>Cash minus debt adjustment</label><input id="cashDebt" type="number" value="0">
         </div>
       </div>
-      <p><button class="btn" onclick="calcDCF()">Recalculate DCF</button></p>
+      <p><button class="btn" onclick="resetDCF()">Reset DCF to 10-K Defaults</button></p>
       <div class="grid three">
         <div class="metric"><div class="label">PV of 5-year FCF</div><div class="value" id="pv5">—</div><div class="note">Discounted yearly cash flows</div></div>
         <div class="metric"><div class="label">PV of terminal value</div><div class="value" id="pvtv">—</div><div class="note">Gordon growth approach</div></div>
@@ -356,7 +356,7 @@
         <div><label>Beta: <span id="betaLabel">1.20</span></label><input id="beta" type="range" min="0.5" max="2" step="0.05" value="1.2"></div>
         <div><label>Market risk premium: <span id="mrpLabel">5.0%</span></label><input id="mrp" type="range" min="3" max="8" step="0.1" value="5"></div>
       </div>
-      <p><button class="btn" onclick="calcCAPM()">Recalculate CAPM</button></p>
+      <p><button class="btn" onclick="resetCAPM()">Reset CAPM Assumptions</button></p>
       <div class="grid three">
         <div class="metric"><div class="label">Required return</div><div class="value" id="capmResult">—</div><div class="note">Investor compensation for systematic risk</div></div>
         <div class="metric"><div class="label">Risk interpretation</div><div class="value" id="riskStatus">—</div><div class="note">Based on beta relative to market beta of 1.0</div></div>
@@ -388,7 +388,6 @@
           <li>Explained formulas like ROE, DuPont, DCF, and CAPM in plain language.</li>
           <li>Made it easy to test multiple growth and discount-rate assumptions.</li>
           <li>Helped turn calculations into a readable report structure.</li>
-          <li> We used ChatGPT to help generate the initial HTML structure for this GitHub page. We reviewed, edited, and customized the page to match our FIN 3010 project, Chipotle data, course concepts, calculations, prompt log, and reflection.</li>
         </ul>
       </div>
       <div class="card">
@@ -409,6 +408,8 @@
       <ol>
         <li>Chipotle Mexican Grill, 2025 Form 10-K, SEC EDGAR: <a href="https://www.sec.gov/Archives/edgar/data/1058090/000105809026000009/cmg-20251231.htm" target="_blank" rel="noreferrer">official 2025 Form 10-K</a>.</li>
         <li>Chipotle investor relations, Fourth Quarter and Full Year 2025 Results: <a href="https://ir.chipotle.com/2026-02-03-CHIPOTLE-ANNOUNCES-FOURTH-QUARTER-AND-FULL-YEAR-2025-RESULTS" target="_blank" rel="noreferrer">company earnings release</a>.</li>
+        <li>FIN 3010 course study guides: Exam 1 review, Exam 2 study guide, and Exam 3 study guide provided for class.</li>
+        <li>This page was modeled as a single-file GitHub Pages classroom tool, similar in style to the FIN 3010 NPV & IRR Explorer.</li>
       </ol>
     </section>
   </main>
@@ -418,6 +419,56 @@
   </footer>
 
   <script>
+
+    const DEFAULTS = {
+      ratios: {
+        rev: 11925601,
+        ni: 1535761,
+        cogs: 3526992,
+        assets25: 8994531,
+        assets24: 9204374,
+        liab: 6163924,
+        eq25: 2830607,
+        eq24: 3655546,
+        curA: 1466953,
+        curL: 1188142
+      },
+      dcf: {
+        fcf0: 1447590,
+        growth: 5,
+        terminal: 2.5,
+        discount: 10.5,
+        cashDebt: 0
+      },
+      capm: {
+        rf: 4.5,
+        beta: 1.2,
+        mrp: 5
+      }
+    };
+
+    function setInputs(values) {
+      Object.entries(values).forEach(([id, value]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = value;
+      });
+    }
+
+    function resetRatios() {
+      setInputs(DEFAULTS.ratios);
+      calcRatios();
+    }
+
+    function resetDCF() {
+      setInputs(DEFAULTS.dcf);
+      calcDCF();
+    }
+
+    function resetCAPM() {
+      setInputs(DEFAULTS.capm);
+      calcCAPM();
+    }
+
     function fmtPct(x) { return (x * 100).toFixed(2) + '%'; }
     function fmtNum(x, dec=2) { return Number(x).toLocaleString(undefined, {maximumFractionDigits: dec, minimumFractionDigits: dec}); }
     function fmtMoney(x) { return '$' + Number(x).toLocaleString(undefined, {maximumFractionDigits: 0}); }
